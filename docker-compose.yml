@@ -1,0 +1,33 @@
+version: '3.1'
+services:
+  commerce:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: .
+    container_name: commerce_app
+    depends_on:
+      - assessment-mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://assessment-mysql-db:3306/assessment
+      - SPRING_DATASOURCE_USERNAME=db_user
+      - SPRING_DATASOURCE_PASSWORD=8b3b91c7
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_HIBERNATE_USE_NEW_ID_GENERATOR_MAPPINGS=false
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+      - SERVER_SERVLET_CONTEXT_PATH=/api/v1
+
+    ports:
+    - '8080:8080'
+
+  assessment-mysql-db:
+    image: 'mysql:8.0'
+    container_name: 'mysql'
+    command: '--default-authentication-plugin=mysql_native_password'
+    restart: 'always'
+    environment:
+      MYSQL_DATABASE: 'assessment'
+      MYSQL_USER: 'db_user'
+      MYSQL_PASSWORD: '8b3b91c7'
+      MYSQL_RANDOM_ROOT_PASSWORD: 'true'
+    ports:
+    - '3306:3306'
